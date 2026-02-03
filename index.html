@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Para ti, mi amor 🌸</title>
+  <style>
+    :root {
+      --bg-1: #0f1026;
+      --bg-2: #1d1f45;
+      --accent: #ff7ab6;
+      --accent-soft: #ffd1e8;
+      --text: #f8f8ff;
+      --glass: rgba(255, 255, 255, 0.08);
+      --shadow: rgba(11, 9, 27, 0.55);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, var(--bg-2), var(--bg-1));
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px 64px;
+      overflow: hidden;
+    }
+
+    #sky {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .wrapper {
+      max-width: 1120px;
+      width: 100%;
+      display: grid;
+      gap: 28px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .message {
+      background: var(--glass);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(18px);
+      padding: 28px;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px var(--shadow);
+    }
+
+    .message h1 {
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      margin-bottom: 16px;
+      color: var(--accent-soft);
+    }
+
+    .message p {
+      line-height: 1.6;
+      font-size: 1.05rem;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .theme-select {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 180px;
+    }
+
+    .theme-select label {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    select {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 500;
+      appearance: none;
+    }
+
+    button {
+      background: linear-gradient(135deg, var(--accent), #ff9bd3);
+      border: none;
+      color: #1d0b2f;
+      padding: 12px 20px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 12px 25px rgba(255, 122, 182, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 16px 28px rgba(255, 122, 182, 0.45);
+    }
+
+    .slider {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 180px;
+    }
+
+    .slider label {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .canvas-card {
+      position: relative;
+      min-height: 520px;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px var(--shadow);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .badge {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      background: rgba(15, 16, 38, 0.75);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      letter-spacing: 0.02em;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .floating-text {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      background: rgba(15, 16, 38, 0.6);
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+  @media (max-width: 720px) {
+      .wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      .canvas-card {
+        min-height: 420px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div class="wrapper">
+    <section class="message">
+      <h1>Un jardín para ti</h1>
+      <p id="messageLine1">
+        Cada flor aparece con la intención de decirte lo que a veces no me cabe en palabras:
+        me inspiras, me iluminas, me haces sentir en casa. Este jardín vive porque tú existes.
+      </p>
+      <p id="messageLine2">
+        Toca el botón para sembrar flores nuevas, o ajusta el ritmo para que el amor florezca
+        tan suave o tan intenso como quieras.
+      </p>
+      <p style="font-size: 0.95rem; opacity: 0.8;">
+        El escenario cambia automáticamente cada pocos segundos.
+      </p>
+      <div class="controls">
+        <button id="addFlower">Sembrar una flor</button>
+        <button id="burst">Lluvia de flores</button>
+        <div class="theme-select">
+          <label for="theme">Escoge un estilo</label>
+          <select id="theme">
+            <option value="romantico">Romántico clásico</option>
+            <option value="atardecer">Atardecer suave</option>
+            <option value="luna">Luna y estrellas</option>
+            <option value="pastel">Pastel delicado</option>
+          </select>
+        </div>
+        <div class="slider">
+          <label for="speed">Ritmo de crecimiento</label>
+          <input id="speed" type="range" min="1" max="8" value="4" />
+        </div>
+      </div>
+    </section>
+
+    <section class="canvas-card">
+      <canvas id="garden" aria-label="Jardín de flores"></canvas>
+      <div class="floating-text">Para mi rabanita hermosa 🌷</div>
+      <div class="badge">Hecho con amor, hoy y siempre, amor mio</div>
+    </section>
+  </div>
+
+  <script>
+  const canvas = document.getElementById("garden");
+  const ctx = canvas.getContext("2d");
+  const skyCanvas = document.getElementById("sky");
+  const skyCtx = skyCanvas.getContext("2d");
+    const addFlowerBtn = document.getElementById("addFlower");
+    const burstBtn = document.getElementById("burst");
+    const speedInput = document.getElementById("speed");
+  const themeSelect = document.getElementById("theme");
+  const titleEl = document.querySelector(".message h1");
+  const messageLine1 = document.getElementById("messageLine1");
+  const messageLine2 = document.getElementById("messageLine2");
+  const floatingText = document.querySelector(".floating-text");
+  const badgeText = document.querySelector(".badge");
+
+    const themes = {
+      romantico: {
+        title: "Un jardín para ti",
+        message1: "Cada flor aparece para recordarte lo mucho que te admiro, te cuido y te pienso.",
+        message2: "Siembra nuevas flores y deja que el amor crezca a nuestro ritmo.",
+        floating: "Para mi rabanita hermosa 🌷",
+        badge: "Hecho con amor, hoy y siempre, amor mio",
+        colors: {
+          "--bg-1": "#0f1026",
+          "--bg-2": "#1d1f45",
+          "--accent": "#ff7ab6",
+          "--accent-soft": "#ffd1e8",
+          "--text": "#f8f8ff",
+        },
+        flower: {
+          shape: "daisy",
+          sizeRange: [26, 50],
+          petalRange: [6, 9],
+          stemColor: "rgba(130, 250, 180, 0.75)",
+          centerColor: "#ffe9b0",
+        },
+        petalTint: "255, 190, 225",
+        palette: [
+          ["#ff7ab6", "#ffd1e8"],
+          ["#ff9bd3", "#ffe2f2"],
+          ["#ffc6ec", "#fff1f8"],
+          ["#ff8fab", "#ffd6e8"],
+          ["#ffb3d9", "#ffe6f5"],
+        ],
+      },
+      atardecer: {
+        title: "Atardecer para nosotros",
+        message1: "Tus abrazos tienen el color cálido de los atardeceres que quiero vivir contigo.",
+        message2: "Que cada flor sea una promesa suave de lo que aún nos espera.",
+        floating: "Mi cielo favorito eres tú 🌅",
+        badge: "Siempre contigo, en cada luz dorada",
+        colors: {
+          "--bg-1": "#2c0c2b",
+          "--bg-2": "#52224f",
+          "--accent": "#ffb347",
+          "--accent-soft": "#ffe0b2",
+          "--text": "#fff8f1",
+        },
+        flower: {
+          shape: "rose",
+          sizeRange: [28, 52],
+          petalRange: [10, 14],
+          stemColor: "rgba(140, 230, 170, 0.75)",
+          centerColor: "#ffd08a",
+        },
+        petalTint: "255, 182, 127",
+        palette: [
+          ["#ffb347", "#ffe0b2"],
+          ["#ffcc80", "#ffe9c5"],
+          ["#ff8a65", "#ffd7c5"],
+          ["#ffb74d", "#ffe0a3"],
+          ["#ffab91", "#ffe0d7"],
+        ],
+      },
+      luna: {
+        title: "Noche para admirarte",
+        message1: "Eres mi calma en la noche, mi luz más bonita cuando todo se apaga.",
+        message2: "Deja que este jardín estrellado te recuerde que siempre estoy contigo.",
+        floating: "Tus ojos son mi constelación ✨",
+        badge: "Con cada estrella, te digo te amo",
+        colors: {
+          "--bg-1": "#0a1026",
+          "--bg-2": "#1b2a52",
+          "--accent": "#9cc8ff",
+          "--accent-soft": "#d3e6ff",
+          "--text": "#f4f8ff",
+        },
+        flower: {
+          shape: "lily",
+          sizeRange: [30, 56],
+          petalRange: [5, 7],
+          stemColor: "rgba(120, 220, 190, 0.75)",
+          centerColor: "#fff2c4",
+        },
+        petalTint: "172, 206, 255",
+        palette: [
+          ["#9cc8ff", "#d3e6ff"],
+          ["#b4ddff", "#eef6ff"],
+          ["#89a5ff", "#d3dfff"],
+          ["#a7c5ff", "#e3ecff"],
+          ["#c0d8ff", "#f0f5ff"],
+        ],
+      },
+      pastel: {
+        title: "Dulce primavera",
+        message1: "Tu ternura me hace florecer como la primavera más bonita.",
+        message2: "Cada pétalo es un gracias por existir y por sonreírme.",
+        floating: "Eres ternura infinita 🌸",
+        badge: "Contigo todo florece suave",
+        colors: {
+          "--bg-1": "#3a1b3a",
+          "--bg-2": "#6a2a6a",
+          "--accent": "#f7a8c9",
+          "--accent-soft": "#ffe6f1",
+          "--text": "#fff6fb",
+        },
+        flower: {
+          shape: "tulip",
+          sizeRange: [26, 48],
+          petalRange: [4, 6],
+          stemColor: "rgba(160, 235, 190, 0.75)",
+          centerColor: "#ffe3f2",
+        },
+        petalTint: "247, 176, 213",
+        palette: [
+          ["#f7a8c9", "#ffe6f1"],
+          ["#f6c1df", "#ffeef7"],
+          ["#f3a1e5", "#ffe4f8"],
+          ["#f9b6d3", "#ffe8f2"],
+          ["#f4c6e8", "#fff1fb"],
+        ],
+      },
+    };
+
+  let palette = themes.romantico.palette;
+  let activeTheme = themes.romantico;
+  const themeKeys = Object.keys(themes);
+  let themeIndex = 0;
+
+    const flowers = [];
+  const petals = [];
+  const maxPetals = 60;
+
+    const resize = () => {
+      const { width, height } = canvas.getBoundingClientRect();
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+      skyCanvas.width = window.innerWidth * window.devicePixelRatio;
+      skyCanvas.height = window.innerHeight * window.devicePixelRatio;
+      skyCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    };
+
+    const rand = (min, max) => Math.random() * (max - min) + min;
+
+    const createFlower = (x, y, sizeOverride) => {
+      const [primary, glow] = palette[Math.floor(rand(0, palette.length))];
+      const { sizeRange, petalRange, shape } = activeTheme.flower;
+      const size = sizeOverride ?? rand(sizeRange[0], sizeRange[1]);
+      flowers.push({
+        x,
+        y,
+        size,
+        primary,
+        glow,
+        petals: Math.floor(rand(petalRange[0], petalRange[1])),
+        shape,
+        sway: rand(0, Math.PI * 2),
+        swaySpeed: rand(0.002, 0.006),
+      });
+    };
+
+    const createPetal = () => {
+      petals.push({
+  x: rand(0, window.innerWidth),
+        y: rand(-40, -10),
+        size: rand(8, 16),
+        drift: rand(-0.4, 0.4),
+        speed: rand(0.6, 1.4),
+        rotation: rand(0, Math.PI * 2),
+        rotationSpeed: rand(-0.02, 0.02),
+        alpha: rand(0.4, 0.8),
+      });
+    };
+
+    const fillPetals = () => {
+      while (petals.length < maxPetals) {
+        petals.push({
+    x: rand(0, window.innerWidth),
+    y: rand(-window.innerHeight, 0),
+          size: rand(8, 16),
+          drift: rand(-0.4, 0.4),
+          speed: rand(0.6, 1.4),
+          rotation: rand(0, Math.PI * 2),
+          rotationSpeed: rand(-0.02, 0.02),
+          alpha: rand(0.4, 0.8),
+        });
+      }
+    };
+
+    const seedGarden = () => {
+      flowers.length = 0;
+      const columns = 4;
+      const rows = 3;
+      for (let i = 0; i < columns; i += 1) {
+        for (let j = 0; j < rows; j += 1) {
+          const x = ((i + 0.5) / columns) * canvas.clientWidth + rand(-30, 30);
+          const y = ((j + 0.6) / rows) * canvas.clientHeight + rand(-10, 30);
+          createFlower(x, y, rand(26, 48));
+        }
+      }
+    };
+
+    const drawStem = (flower) => {
+      ctx.save();
+  ctx.strokeStyle = activeTheme.flower.stemColor;
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(flower.x, canvas.clientHeight + 10);
+      ctx.bezierCurveTo(
+        flower.x + Math.sin(flower.sway) * 12,
+        flower.y + 50,
+        flower.x - Math.sin(flower.sway) * 16,
+        flower.y + 20,
+        flower.x,
+        flower.y
+      );
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const drawFlower = (flower) => {
+      const angleStep = (Math.PI * 2) / flower.petals;
+
+      if (flower.shape === "rose") {
+        for (let layer = 0; layer < 3; layer += 1) {
+          const scale = 1 - layer * 0.18;
+          for (let i = 0; i < flower.petals; i += 1) {
+            const angle = i * angleStep + flower.sway * 0.2 + layer * 0.4;
+            const petalX = flower.x + Math.cos(angle) * flower.size * 0.25 * scale;
+            const petalY = flower.y + Math.sin(angle) * flower.size * 0.25 * scale;
+
+            ctx.save();
+            ctx.translate(petalX, petalY);
+            ctx.rotate(angle);
+            ctx.fillStyle = flower.primary;
+            ctx.shadowColor = flower.glow;
+            ctx.shadowBlur = 14;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, flower.size * 0.35 * scale, flower.size * 0.18 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        }
+      } else if (flower.shape === "tulip") {
+        for (let i = 0; i < flower.petals; i += 1) {
+          const angle = (i - 1) * 0.6 + flower.sway * 0.12;
+          const petalX = flower.x + Math.cos(angle) * flower.size * 0.18;
+          const petalY = flower.y + Math.sin(angle) * flower.size * 0.05;
+          ctx.save();
+          ctx.translate(petalX, petalY);
+          ctx.rotate(angle);
+          ctx.fillStyle = flower.primary;
+          ctx.shadowColor = flower.glow;
+          ctx.shadowBlur = 16;
+          ctx.beginPath();
+          ctx.moveTo(0, flower.size * 0.2);
+          ctx.quadraticCurveTo(flower.size * 0.35, -flower.size * 0.4, 0, -flower.size * 0.1);
+          ctx.quadraticCurveTo(-flower.size * 0.35, -flower.size * 0.4, 0, flower.size * 0.2);
+          ctx.fill();
+          ctx.restore();
+        }
+      } else if (flower.shape === "lily") {
+        for (let i = 0; i < flower.petals; i += 1) {
+          const angle = i * angleStep + flower.sway * 0.25;
+          const petalX = flower.x + Math.cos(angle) * flower.size * 0.25;
+          const petalY = flower.y + Math.sin(angle) * flower.size * 0.25;
+
+          ctx.save();
+          ctx.translate(petalX, petalY);
+          ctx.rotate(angle);
+          ctx.fillStyle = flower.primary;
+          ctx.shadowColor = flower.glow;
+          ctx.shadowBlur = 18;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, flower.size * 0.42, flower.size * 0.18, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      } else {
+        for (let i = 0; i < flower.petals; i += 1) {
+          const angle = i * angleStep + flower.sway * 0.3;
+          const petalX = flower.x + Math.cos(angle) * flower.size * 0.35;
+          const petalY = flower.y + Math.sin(angle) * flower.size * 0.35;
+
+          ctx.save();
+          ctx.translate(petalX, petalY);
+          ctx.rotate(angle);
+          ctx.fillStyle = flower.primary;
+          ctx.shadowColor = flower.glow;
+          ctx.shadowBlur = 18;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, flower.size * 0.45, flower.size * 0.22, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      ctx.save();
+      ctx.fillStyle = activeTheme.flower.centerColor;
+      ctx.shadowColor = activeTheme.flower.centerColor;
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(flower.x, flower.y, flower.size * 0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const drawPetal = (petal) => {
+      skyCtx.save();
+      skyCtx.translate(petal.x, petal.y);
+      skyCtx.rotate(petal.rotation);
+      skyCtx.fillStyle = `rgba(${activeTheme.petalTint}, ${petal.alpha})`;
+      skyCtx.beginPath();
+      skyCtx.ellipse(0, 0, petal.size, petal.size * 0.5, 0, 0, Math.PI * 2);
+      skyCtx.fill();
+      skyCtx.restore();
+    };
+
+    const render = () => {
+  skyCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+  ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+  ctx.fillStyle = "rgba(11, 12, 28, 0.35)";
+  ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+      if (petals.length < maxPetals && Math.random() < 0.25) {
+        createPetal();
+      }
+
+      for (const petal of petals) {
+        petal.y += petal.speed * (Number(speedInput.value) / 4);
+        petal.x += petal.drift;
+        petal.rotation += petal.rotationSpeed;
+        if (petal.y > window.innerHeight + 30) {
+          petal.y = rand(-60, -20);
+          petal.x = rand(0, window.innerWidth);
+        }
+        drawPetal(petal);
+      }
+
+      for (const flower of flowers) {
+        flower.sway += flower.swaySpeed * (Number(speedInput.value) / 4);
+        drawStem(flower);
+        drawFlower(flower);
+      }
+
+      requestAnimationFrame(render);
+    };
+
+    addFlowerBtn.addEventListener("click", () => {
+      createFlower(rand(40, canvas.clientWidth - 40), rand(120, canvas.clientHeight - 40));
+    });
+
+    burstBtn.addEventListener("click", () => {
+      for (let i = 0; i < 6; i += 1) {
+        createFlower(rand(40, canvas.clientWidth - 40), rand(120, canvas.clientHeight - 40));
+      }
+      for (let i = 0; i < 12; i += 1) {
+        createPetal();
+      }
+    });
+
+    const applyTheme = (key) => {
+      const theme = themes[key] || themes.romantico;
+      activeTheme = theme;
+      palette = theme.palette;
+      titleEl.textContent = theme.title;
+      messageLine1.textContent = theme.message1;
+      messageLine2.textContent = theme.message2;
+      floatingText.textContent = theme.floating;
+      badgeText.textContent = theme.badge;
+      Object.entries(theme.colors).forEach(([variable, value]) => {
+        document.documentElement.style.setProperty(variable, value);
+      });
+      seedGarden();
+    };
+
+    themeSelect.addEventListener("change", (event) => {
+      themeIndex = themeKeys.indexOf(event.target.value);
+      applyTheme(event.target.value);
+    });
+
+    window.addEventListener("resize", () => {
+      resize();
+      seedGarden();
+      fillPetals();
+    });
+
+    resize();
+    applyTheme("romantico");
+    fillPetals();
+    setInterval(() => {
+      themeIndex = (themeIndex + 1) % themeKeys.length;
+      const nextTheme = themeKeys[themeIndex];
+      themeSelect.value = nextTheme;
+      applyTheme(nextTheme);
+    }, 12000);
+    render();
+  </script>
+</body>
+</html>
