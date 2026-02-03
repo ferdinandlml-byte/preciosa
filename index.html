@@ -81,6 +81,10 @@
       align-items: center;
     }
 
+    .controls > * {
+      flex: 1 1 180px;
+    }
+
     .theme-select {
       display: flex;
       flex-direction: column;
@@ -176,13 +180,67 @@
       border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
-  @media (max-width: 720px) {
+    @media (max-width: 720px) {
+      body {
+        padding: 20px 14px 40px;
+      }
+
       .wrapper {
         grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .message {
+        padding: 22px;
+      }
+
+      .message h1 {
+        font-size: 1.9rem;
+      }
+
+      .message p {
+        font-size: 0.98rem;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .controls > * {
+        flex: 1 1 auto;
+      }
+
+      button {
+        width: 100%;
       }
 
       .canvas-card {
-        min-height: 420px;
+        min-height: 360px;
+      }
+
+      .floating-text {
+        font-size: 0.82rem;
+        padding: 10px 12px;
+      }
+
+      .badge {
+        font-size: 0.78rem;
+        padding: 6px 12px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .message h1 {
+        font-size: 1.65rem;
+      }
+
+      .message p {
+        font-size: 0.93rem;
+      }
+
+      .canvas-card {
+        min-height: 320px;
       }
     }
   </style>
