@@ -188,6 +188,7 @@
     @media (max-width: 720px) {
       body {
         padding: 16px 12px 28px;
+        align-items: flex-start;
       }
 
       .wrapper {
@@ -208,6 +209,10 @@
         margin-bottom: 14px;
       }
 
+      .message p:last-of-type {
+        margin-bottom: 10px;
+      }
+
       .controls {
         flex-direction: column;
         align-items: stretch;
@@ -220,10 +225,13 @@
 
       button {
         width: 100%;
+        font-size: 0.95rem;
+        padding: 10px 16px;
       }
 
       .canvas-card {
-        min-height: 300px;
+        min-height: 240px;
+        height: min(40vh, 300px);
       }
 
       .floating-text {
@@ -240,6 +248,7 @@
     @media (max-width: 420px) {
       body {
         padding: 12px 10px 24px;
+        align-items: flex-start;
       }
 
       .message h1 {
@@ -250,8 +259,13 @@
         font-size: 0.9rem;
       }
 
+      .controls {
+        gap: 8px;
+      }
+
       .canvas-card {
-        min-height: 260px;
+        min-height: 210px;
+        height: min(38vh, 240px);
       }
     }
   </style>
